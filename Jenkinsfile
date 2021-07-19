@@ -20,6 +20,9 @@ pipeline {
             steps {
                 withCredentials([usernamePassword(credentialsId: '76fcbce2-568d-4fe9-b56e-b269473e7b7f', passwordVariable: 'GITHUB_TOKEN', usernameVariable: 'GITHUB_USER')]) {
                     sh '''. $PWD/bin/miniconda3/etc/profile.d/conda.sh; conda activate candig; echo $GITHUB_TOKEN | docker login ghcr.io -u $GITHUB_USER --password-stdin; make docker-push REGISTRY=ghcr.io/candig'''
+                withCredentials([usernamePassword(credentialsId: '9256d1a7-d22e-4043-995a-c4c049418701', passwordVariable: 'TOKEN', usernameVariable: 'USERNAME')]) {
+                    sh '''. $PWD/bin/miniconda3/etc/profile.d/conda.sh; conda activate candig; echo $TOKEN | docker login registry-1.docker.io -u $USERNAME --password-stdin; make docker-push REGISTRY=candig'''
+
                 }
             }
         }
