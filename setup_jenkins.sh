@@ -3,7 +3,7 @@
 LOGFILE=$PWD/tmp/progress.txt
 
 #sed 's/DOCKER_REGISTRY=.*/DOCKER_REGISTRY=ghcr.io\/candig/' etc/env/example.env > .env
-
+cp etc/env/example.env .env
 . $PWD/bin/miniconda3/etc/profile.d/conda.sh
 conda activate candig
 if [ $? -ne 0 ]; then
