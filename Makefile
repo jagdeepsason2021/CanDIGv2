@@ -534,7 +534,7 @@ docker-pull:
 #<<<
 .PHONY: docker-push
 docker-push:
-  echo $(REGISTRY)
+	echo $(REGISTRY)
 	$(foreach MODULE, $(CANDIG_MODULES), $(MAKE) push-$(MODULE);)
 
 #>>>
