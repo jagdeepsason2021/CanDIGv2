@@ -164,6 +164,7 @@ bin-traefik: mkdir
 #<<<
 build-%:
 	echo "    started build-$*" >> $(LOGFILE)
+	echo "hello $(DOCKER_REGISTRY)"
 	DOCKER_BUILDKIT=1 COMPOSE_DOCKER_CLI_BUILD=1 \
 	cat $(DIR)/lib/compose/docker-compose.yml $(DIR)/lib/logging/$(DOCKER_LOG_DRIVER)/docker-compose.yml $(DIR)/lib/$*/docker-compose.yml \
 		| docker-compose -f - build $(BUILD_OPTS)
