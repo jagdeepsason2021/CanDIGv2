@@ -520,6 +520,9 @@ docker-networks:
 #<<<
 .PHONY: docker-pull
 docker-pull:
+  ifndef $(REGISTRY)
+    REGISTRY = $(DOCKER_REGISTRY)
+  echo $(REGISTRY)
 	$(foreach MODULE, $(CANDIG_MODULES), $(MAKE) pull-$(MODULE);)
 	$(foreach MODULE, $(TOIL_MODULES), docker pull $(DOCKER_REGISTRY)/$(MODULE):latest;)
 
@@ -530,6 +533,9 @@ docker-pull:
 #<<<
 .PHONY: docker-push
 docker-push:
+  ifndef $(REGISTRY)
+    REGISTRY = $(DOCKER_REGISTRY)
+  echo $(REGISTRY)
 	$(foreach MODULE, $(CANDIG_MODULES), $(MAKE) push-$(MODULE);)
 
 #>>>
