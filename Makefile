@@ -12,10 +12,8 @@ DIR = $(PWD)
 CONDA = $(DIR)/bin/miniconda3/condabin/conda
 LOGFILE=$(DIR)/tmp/progress.txt
 
-ifndef $(REGISTRY)
-  REGISTRY = $(DOCKER_REGISTRY)
-endif
-
+ifdef $(REGISTRY)
+	export DOCKER_REGISTRY = $(REGISTRY)
 
 .PHONY: all
 all:
@@ -525,7 +523,7 @@ docker-networks:
 .PHONY: docker-pull
 docker-pull:
 	$(foreach MODULE, $(CANDIG_MODULES), $(MAKE) pull-$(MODULE);)
-	$(foreach MODULE, $(TOIL_MODULES), docker pull $(REGISTRY)/$(MODULE):latest;)
+	$(foreach MODULE, $(TOIL_MODULES), docker pull $(DOCKER_REGISTRY)/$(MODULE):latest;)
 
 #>>>
 # push docker images to $DOCKER_REGISTRY
@@ -534,7 +532,6 @@ docker-pull:
 #<<<
 .PHONY: docker-push
 docker-push:
-	echo $(REGISTRY)
 	$(foreach MODULE, $(CANDIG_MODULES), $(MAKE) push-$(MODULE);)
 
 #>>>
