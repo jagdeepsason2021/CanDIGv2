@@ -14,6 +14,7 @@ LOGFILE=$(DIR)/tmp/progress.txt
 
 ifdef $(REGISTRY)
 	export DOCKER_REGISTRY = $(REGISTRY)
+endif
 
 .PHONY: all
 all:
