@@ -5,7 +5,7 @@ pipeline {
         stage('Setup') {
             steps {
                 sh('printenv')
-                checkout([$class: 'GitSCM', branches: [[name: ${env.BRANCH_NAME}]], extensions: [[$class: 'SubmoduleOption', disableSubmodules: false, parentCredentials: false, recursiveSubmodules: true, reference: '', trackingSubmodules: false]], userRemoteConfigs: [[url: 'https://github.com/CanDIG/CanDIGv2']]])
+                checkout([$class: 'GitSCM', branches: [[name: ${env.GIT_BRANCH}]], extensions: [[$class: 'SubmoduleOption', disableSubmodules: false, parentCredentials: false, recursiveSubmodules: true, reference: '', trackingSubmodules: false]], userRemoteConfigs: [[url: 'https://github.com/CanDIG/CanDIGv2']]])
                 sh '''bash setup_jenkins.sh'''
             }
         }
