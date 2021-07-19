@@ -536,7 +536,6 @@ docker-push:
   ifndef $(REGISTRY)
     REGISTRY = $(DOCKER_REGISTRY)
   endif
-  @echo $(REGISTRY)
 	$(foreach MODULE, $(CANDIG_MODULES), $(MAKE) push-$(MODULE);)
 
 #>>>
