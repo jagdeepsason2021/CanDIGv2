@@ -9,14 +9,6 @@ pipeline {
                 sh '''bash setup_jenkins.sh'''
             }
         }
-#         stage('Make') {
-#             steps {
-#                 catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
-#                     sh '''. $PWD/bin/miniconda3/etc/profile.d/conda.sh; conda activate candig; make images REGISTRY=ghcr.io/candig'''
-#                     
-#                 }
-#             }
-#         }
         stage('Publish') {
             steps {
                 withCredentials([usernamePassword(credentialsId: '76fcbce2-568d-4fe9-b56e-b269473e7b7f', passwordVariable: 'GITHUB_TOKEN', usernameVariable: 'GITHUB_USER')]) {
