@@ -13,7 +13,6 @@ CONDA = $(DIR)/bin/miniconda3/condabin/conda
 LOGFILE=$(DIR)/tmp/progress.txt
 
 ifdef REGISTRY
-	echo "howdy $(REGISTRY)"
 	export DOCKER_REGISTRY = $(REGISTRY)
 endif
 
