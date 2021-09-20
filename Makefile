@@ -6,7 +6,7 @@ env ?= .env
 
 include $(env)
 export $(shell sed 's/=.*//' $(env))
-
+export DOCKER_REGISTRY=candig
 SHELL = bash
 DIR = $(PWD)
 CONDA = $(DIR)/bin/miniconda3/condabin/conda

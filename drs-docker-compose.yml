@@ -1,0 +1,88 @@
+version: '3.7'
+
+networks:
+  bridge:
+    external: true
+  bridge-net:
+  ingress:
+  traefik-net:
+  agent-net:
+
+volumes:
+  datasets-data:
+  minio-data:
+  minio-config:
+  mc-config:
+  toil-jobstore:
+  portainer-data:
+  prometheus-data:
+  consul-data:
+  grafana-data:
+  traefik-data:
+  keycloak-data:
+  tyk-data:
+  tyk-redis-data:
+  vault-data:
+
+secrets:
+  aws-credentials:
+    file: $PWD/tmp/secrets/aws-credentials
+  federation-peers:
+    file: $PWD/lib/federation-service/federation_service/configs/federation-peers.json
+  federation-services:
+    file: $PWD/lib/federation-service/federation_service/configs/federation-services.json
+  metadata-app-secret:
+    file: $PWD/tmp/secrets/metadata-app-secret
+  metadata-db-user:
+    file: $PWD/tmp/secrets/metadata-db-user
+  metadata-db-secret:
+    file: $PWD/tmp/secrets/metadata-db-secret
+  metadata-settings:
+    file: $PWD/lib/chord-metadata/settings.py
+  minio-access-key:
+    file: $PWD/tmp/secrets/minio-access-key
+  minio-secret-key:
+    file: $PWD/tmp/secrets/minio-secret-key
+  portainer-user:
+    file: $PWD/tmp/secrets/portainer-user
+  portainer-secret:
+    file: $PWD/tmp/secrets/portainer-secret
+  traefik-ssl-key:
+    file: $PWD/tmp/ssl/${TRAEFIK_SSL_CERT}.key
+  traefik-ssl-crt:
+    file: $PWD/tmp/ssl/${TRAEFIK_SSL_CERT}.crt
+  wes-dependency-resolver:
+    file: $PWD/etc/yml/${WES_DEPENDENCY_RESOLVER}.yml
+  keycloak-admin-user:
+    file: $PWD/tmp/secrets/keycloak-admin-user
+  keycloak-admin-password:
+    file: $PWD/tmp/secrets/keycloak-admin-password
+version: '3.7'
+
+services:
+  chord-drs:
+    build:
+      context: $PWD/lib/drs-server/chord_drs
+      args:
+        venv_python: "${VENV_PYTHON}"
+        alpine_version: "${ALPINE_VERSION}"
+    image: ${DOCKER_REGISTRY}/chord-drs:${CHORD_DRS_VERSION:-latest}
+    networks:
+      - ${DOCKER_NET}
+    ports:
+      - "${CHORD_DRS_PORT}:5000"
+    deploy:
+      placement:
+        constraints:
+          - node.role == worker
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
+      labels:
+        - "traefik.enable=true"
+        - "traefik.docker.lbswarm=true"
+        - "traefik.http.routers.chord-drs.rule=Host(`chord-drs.${CANDIG_DOMAIN}`)"
+        - "traefik.http.services.chord-drs.loadbalancer.server.port=${CHORD_DRS_PORT}"
+    command: ["--host", "0.0.0.0", "--port", "5000"]

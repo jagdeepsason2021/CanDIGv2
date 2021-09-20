@@ -1,0 +1,98 @@
+version: '3.7'
+
+networks:
+  bridge:
+    external: true
+  bridge-net:
+  ingress:
+  traefik-net:
+  agent-net:
+
+volumes:
+  datasets-data:
+  minio-data:
+  minio-config:
+  mc-config:
+  toil-jobstore:
+  portainer-data:
+  prometheus-data:
+  consul-data:
+  grafana-data:
+  traefik-data:
+  keycloak-data:
+  tyk-data:
+  tyk-redis-data:
+  vault-data:
+
+secrets:
+  aws-credentials:
+    file: $PWD/tmp/secrets/aws-credentials
+  federation-peers:
+    file: $PWD/lib/federation-service/federation_service/configs/federation-peers.json
+  federation-services:
+    file: $PWD/lib/federation-service/federation_service/configs/federation-services.json
+  metadata-app-secret:
+    file: $PWD/tmp/secrets/metadata-app-secret
+  metadata-db-user:
+    file: $PWD/tmp/secrets/metadata-db-user
+  metadata-db-secret:
+    file: $PWD/tmp/secrets/metadata-db-secret
+  metadata-settings:
+    file: $PWD/lib/chord-metadata/settings.py
+  minio-access-key:
+    file: $PWD/tmp/secrets/minio-access-key
+  minio-secret-key:
+    file: $PWD/tmp/secrets/minio-secret-key
+  portainer-user:
+    file: $PWD/tmp/secrets/portainer-user
+  portainer-secret:
+    file: $PWD/tmp/secrets/portainer-secret
+  traefik-ssl-key:
+    file: $PWD/tmp/ssl/${TRAEFIK_SSL_CERT}.key
+  traefik-ssl-crt:
+    file: $PWD/tmp/ssl/${TRAEFIK_SSL_CERT}.crt
+  wes-dependency-resolver:
+    file: $PWD/etc/yml/${WES_DEPENDENCY_RESOLVER}.yml
+  keycloak-admin-user:
+    file: $PWD/tmp/secrets/keycloak-admin-user
+  keycloak-admin-password:
+    file: $PWD/tmp/secrets/keycloak-admin-password
+version: '3.7'
+
+services:
+  minio:
+    image: minio/minio:${MINIO_VERSION:-latest}
+    volumes:
+      - minio-data:/data
+      - minio-config:/root/.minio
+    networks:
+      - ${DOCKER_NET}
+    ports:
+      - "${MINIO_UI_PORT}:9000"
+    deploy:
+      placement:
+        constraints:
+          - node.role == manager
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
+      labels:
+        - "traefik.enable=true"
+        - "traefik.http.routers.minio.rule=Host(`minio.${CANDIG_DOMAIN}`)"
+        - "traefik.http.services.minio.loadbalancer.server.port=${MINIO_UI_PORT}"
+    environment:
+      - MINIO_REGION=${MINIO_REGION}
+      - CANDIG_DOMAIN="${CANDIG_DOMAIN}"
+    secrets:
+      - source: minio-access-key
+        target: access_key
+      - source: minio-secret-key
+        target: secret_key
+    command: ["server", "/data"]
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 30s
+      timeout: 20s
+      retries: 3
