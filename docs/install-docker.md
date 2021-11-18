@@ -97,6 +97,7 @@ sudo usermod -aG docker $(whoami)
 ```bash
 # 1. initialize repo and submodules
 git clone -b develop https://github.com/CanDIG/CanDIGv2.git
+cd CanDIGv2
 git submodule update --init --recursive
 cd CanDIGv2
 

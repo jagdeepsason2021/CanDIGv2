@@ -1,8 +1,8 @@
 #>>>
-# close keycloak services
+# close all authentication and authorization services
 
 #<<<
-clean-keycloak:
+clean-authx:
 	cat $(DIR)/lib/compose/docker-compose.yml $(DIR)/lib/logging/$(DOCKER_LOG_DRIVER)/docker-compose.yml \
 		$(DIR)/lib/keycloak/docker-compose.yml | docker-compose -f - down
 
